@@ -8,9 +8,7 @@ import lombok.NonNull;
 @Builder
 public class ArticleRequestDto {
 
-    @NonNull
-    private String content;
+  @NonNull private String content;
 
-    @NonNull
-    private Long authorId;
+  @NonNull private Long authorId;
 }
