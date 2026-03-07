@@ -79,6 +79,11 @@ public class ArticleController {
     }
 
     @GetMapping
+    @Operation(summary = "Get articles by user id")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(responseCode = "404", description = "Article not found")
+    })
     public ResponseEntity<List<ArticleResponseDto>> getArticleByUserId(@RequestParam Long authorId) {
         var articles = articleService.getArticleListByUserId(authorId);
         return ResponseEntity.ok(articles);

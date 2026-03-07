@@ -16,13 +16,13 @@ import java.util.Optional;
 
 @Service
 @Transactional
-public class FollowerService {
+public class FollowService {
 
     private final FollowRepository followRepository;
     private final UserRepository userRepository;
 
     @Autowired
-    public FollowerService(FollowRepository followRepository, UserRepository userRepository) {
+    public FollowService(FollowRepository followRepository, UserRepository userRepository) {
         this.followRepository = followRepository;
         this.userRepository = userRepository;
     }
