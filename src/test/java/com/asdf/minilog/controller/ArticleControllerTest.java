@@ -3,8 +3,13 @@ package com.asdf.minilog.controller;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.asdf.minilog.dto.ArticleRequestDto;
 import com.asdf.minilog.dto.ArticleResponseDto;
@@ -21,20 +26,18 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(ArticleController.class) // 웹 레이어만 테스트
-@MockBean(JpaMetamodelMappingContext.class)
 public class ArticleControllerTest {
 
   @Autowired private MockMvc mockMvc;
 
-  @MockBean private ArticleService articleService;
+  @MockitoBean private ArticleService articleService;
 
   private ObjectMapper objectMapper = new ObjectMapper();
 
@@ -63,7 +66,7 @@ public class ArticleControllerTest {
 
     mockMvc
         .perform(
-            post("/api/v1/article")
+            post("/api/v1/articles")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestDto)))
         .andExpect(status().isOk())
@@ -88,7 +91,7 @@ public class ArticleControllerTest {
     when(articleService.getArticleById(anyLong())).thenReturn(responseDto);
 
     mockMvc
-        .perform(get("/api/v1/article/1"))
+        .perform(get("/api/v1/articles/1"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.articleId").value(1L))
         .andExpect(jsonPath("$.content").value("Test Content"))
@@ -113,7 +116,7 @@ public class ArticleControllerTest {
 
     mockMvc
         .perform(
-            put("/api/v1/article/1")
+            put("/api/v1/articles/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestDto)))
         .andExpect(status().isOk())
@@ -126,7 +129,7 @@ public class ArticleControllerTest {
 
   @Test
   public void testDeleteArticle() throws Exception {
-    mockMvc.perform(delete("/api/v1/article/1")).andExpect(status().isNoContent());
+    mockMvc.perform(delete("/api/v1/articles/1")).andExpect(status().isNoContent());
   }
 
   @Test
@@ -143,7 +146,7 @@ public class ArticleControllerTest {
     when(articleService.getArticleListByUserId(anyLong())).thenReturn(responseList);
 
     mockMvc
-        .perform(get("/api/v1/article").param("authorId", "1"))
+        .perform(get("/api/v1/articles").param("authorId", "1"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$[0].articleId").value(1L))
         .andExpect(jsonPath("$[0].content").value("Test Content"))
@@ -158,7 +161,7 @@ public class ArticleControllerTest {
         .thenThrow(new ArticleNotFoundException("Article Not Found"));
 
     mockMvc
-        .perform(get("/api/v1/article/999"))
+        .perform(get("/api/v1/articles/999"))
         .andExpect(status().isNotFound())
         .andExpect(content().string("Article Not Found"));
   }

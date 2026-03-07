@@ -24,7 +24,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -32,7 +31,6 @@ import org.springframework.test.web.servlet.MockMvc;
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(UserController.class)
-@MockitoBean(JpaMetamodelMappingContext.class)
 public class UserControllerTest {
 
   @Autowired private MockMvc mockMvc;
@@ -57,7 +55,7 @@ public class UserControllerTest {
     when(userService.getUsers()).thenReturn(userResponseDtoList);
 
     mockMvc
-        .perform(get("/api/v1/user"))
+        .perform(get("/api/v1/users"))
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
         .andExpect(jsonPath("$[0].id").value(1L))
@@ -73,7 +71,7 @@ public class UserControllerTest {
     when(userService.getUserById(anyLong())).thenReturn(Optional.of(userResponseDto));
 
     mockMvc
-        .perform(get("/api/v1/user/1"))
+        .perform(get("/api/v1/users/1"))
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
         .andExpect(jsonPath("$.id").value(1L))
@@ -90,7 +88,7 @@ public class UserControllerTest {
 
     mockMvc
         .perform(
-            post("/api/v1/user")
+            post("/api/v1/users")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(userRequestDto)))
         .andExpect(status().isOk())
@@ -109,7 +107,7 @@ public class UserControllerTest {
 
     mockMvc
         .perform(
-            put("/api/v1/user/1")
+            put("/api/v1/users/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(userRequestDto)))
         .andExpect(status().isOk())
@@ -120,7 +118,7 @@ public class UserControllerTest {
 
   @Test
   public void testDeleteUser() throws Exception {
-    mockMvc.perform(delete("/api/v1/user/1")).andExpect(status().isNoContent());
+    mockMvc.perform(delete("/api/v1/users/1")).andExpect(status().isNoContent());
   }
 
   @Test
@@ -128,7 +126,7 @@ public class UserControllerTest {
     when(userService.getUserById(anyLong())).thenThrow(new UserNotFoundException("Test Exception"));
 
     mockMvc
-        .perform(get("/api/v1/user/999"))
+        .perform(get("/api/v1/users/999"))
         .andExpect(status().isNotFound())
         .andExpect(content().string("Test Exception"));
   }
