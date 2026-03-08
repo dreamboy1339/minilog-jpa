@@ -55,7 +55,7 @@ public class UserControllerTest {
     when(userService.getUsers()).thenReturn(userResponseDtoList);
 
     mockMvc
-        .perform(get("/api/v1/users"))
+        .perform(get("/api/v1/user"))
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
         .andExpect(jsonPath("$[0].id").value(1L))
@@ -71,7 +71,7 @@ public class UserControllerTest {
     when(userService.getUserById(anyLong())).thenReturn(Optional.of(userResponseDto));
 
     mockMvc
-        .perform(get("/api/v1/users/1"))
+        .perform(get("/api/v1/user/1"))
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
         .andExpect(jsonPath("$.id").value(1L))
@@ -88,7 +88,7 @@ public class UserControllerTest {
 
     mockMvc
         .perform(
-            post("/api/v1/users")
+            post("/api/v1/user")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(userRequestDto)))
         .andExpect(status().isOk())
@@ -107,7 +107,7 @@ public class UserControllerTest {
 
     mockMvc
         .perform(
-            put("/api/v1/users/1")
+            put("/api/v1/user/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(userRequestDto)))
         .andExpect(status().isOk())
@@ -118,7 +118,7 @@ public class UserControllerTest {
 
   @Test
   public void testDeleteUser() throws Exception {
-    mockMvc.perform(delete("/api/v1/users/1")).andExpect(status().isNoContent());
+    mockMvc.perform(delete("/api/v1/user/1")).andExpect(status().isNoContent());
   }
 
   @Test
@@ -126,7 +126,7 @@ public class UserControllerTest {
     when(userService.getUserById(anyLong())).thenThrow(new UserNotFoundException("Test Exception"));
 
     mockMvc
-        .perform(get("/api/v1/users/999"))
+        .perform(get("/api/v1/user/999"))
         .andExpect(status().isNotFound())
         .andExpect(content().string("Test Exception"));
   }

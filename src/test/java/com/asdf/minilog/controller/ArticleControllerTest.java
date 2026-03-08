@@ -66,7 +66,7 @@ public class ArticleControllerTest {
 
     mockMvc
         .perform(
-            post("/api/v1/articles")
+            post("/api/v1/article")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestDto)))
         .andExpect(status().isOk())
@@ -91,7 +91,7 @@ public class ArticleControllerTest {
     when(articleService.getArticleById(anyLong())).thenReturn(responseDto);
 
     mockMvc
-        .perform(get("/api/v1/articles/1"))
+        .perform(get("/api/v1/article/1"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.articleId").value(1L))
         .andExpect(jsonPath("$.content").value("Test Content"))
@@ -116,7 +116,7 @@ public class ArticleControllerTest {
 
     mockMvc
         .perform(
-            put("/api/v1/articles/1")
+            put("/api/v1/article/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestDto)))
         .andExpect(status().isOk())
@@ -129,7 +129,7 @@ public class ArticleControllerTest {
 
   @Test
   public void testDeleteArticle() throws Exception {
-    mockMvc.perform(delete("/api/v1/articles/1")).andExpect(status().isNoContent());
+    mockMvc.perform(delete("/api/v1/article/1")).andExpect(status().isNoContent());
   }
 
   @Test
@@ -146,7 +146,7 @@ public class ArticleControllerTest {
     when(articleService.getArticleListByUserId(anyLong())).thenReturn(responseList);
 
     mockMvc
-        .perform(get("/api/v1/articles").param("authorId", "1"))
+        .perform(get("/api/v1/article").param("authorId", "1"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$[0].articleId").value(1L))
         .andExpect(jsonPath("$[0].content").value("Test Content"))
@@ -161,7 +161,7 @@ public class ArticleControllerTest {
         .thenThrow(new ArticleNotFoundException("Article Not Found"));
 
     mockMvc
-        .perform(get("/api/v1/articles/999"))
+        .perform(get("/api/v1/article/999"))
         .andExpect(status().isNotFound())
         .andExpect(content().string("Article Not Found"));
   }
